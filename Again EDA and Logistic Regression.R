@@ -1,6 +1,7 @@
 library(readr)
-dat <- read_csv("C:/Users/Saiful_desv/Desktop/Rention-data-analysis-master/Rention model.csv", 
+dat <- read_csv("Rention model.csv", 
                 na = "NULL")
+
 
 str(dat)
 
@@ -213,6 +214,9 @@ test <- dat[-intrain,]
 dim(test)
 dim(train)
 
+head(test)
+head(train)
+
 ### Fitting model:
 
 trctrl <- trainControl(method = "cv", number = 10)
@@ -225,20 +229,30 @@ glmModel <- train(sold ~ Year_month+duration_yrs+market+segment_sub+
 
 warnings()
 
-test2 <- test[,c("sold","Year_month","duration_yrs","market","segment_sub",
+test2 <- test[,c("Year_month","duration_yrs","market","segment_sub",
                 "fundng_ty","sic_division","prebbd_re","bbd","postbbd_re","rnwl_fund")]
 
 test_pred <- predict(glmModel,newdata = test2,type="raw")
 
-table(test_pred)
 
 
 
 
 
+length(test_pred)
+length(test$sold)
+
+
+test$pred_sold = test_pred
+
+test$sold = as.factor(test$sold)
 ### Accuracy measure 
-confusionMatrix(test$sold,test_pred)  #check accuracy
+table(test$sold,test$pred_sold)  #check accuracy
 
+
+accuracy = (8+919)/length(test_pred)
+accuracy*100
+#85.6% accuracy of Logistic regression model !!!
 
 ###  Checking multicollinearity
 library(car)
